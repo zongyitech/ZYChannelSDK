@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,7 +32,6 @@ import com.yiru.jxdl.at.wxapi.WXPayEntryActivity;
 import com.zongyi.channeladapter.alipay.AliPayBean;
 import com.zongyi.channeladapter.alipay.AuthResult;
 import com.zongyi.channeladapter.alipay.PayResult;
-import com.zongyi.channeladapter.util.OkHttpClientManager;
 import com.zongyi.channeladapter.wxbean.WXPAYModel;
 import com.zongyi.zychannelsdk_demo.R;
 
@@ -340,78 +340,167 @@ public class ChannelAdapterOfficial extends ChannelAdapterMain {
 //    }
 
     private void aliPay(Activity activity, String body, String subject, String totalAmount) {
-        OkHttpClientManager.postAsyn(Url.ALIPAY, new OkHttpClientManager.ResultCallback<String>() {
-                    @Override
-                    public void onError(Request request, Exception e) {
+        FormEncodingBuilder builder = new FormEncodingBuilder();
+        builder.add("body", body);
+        builder.add("subject", subject);
+        builder.add("totalAmount", totalAmount);
+        Request request = new Request.Builder().url(Url.ALIPAY).post(builder.build()).build();
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
 
-                    }
+            @Override
+            public void onFailure(Request request, IOException e) {
 
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("111111", response);
-                        Gson gson = new Gson();
-                        JsonReader reader = new JsonReader(new StringReader(response));
-                        mAliPayBean = gson.fromJson(reader, AliPayBean.class);
-                        if (mAliPayBean.getCode() == 0) {
-                            // 支付宝支付必须异步调起
-                            Runnable payRunnable = new Runnable() {
-                                @Override
-                                public void run() {
-                                    PayTask alipay = new PayTask(activity);
-                                    Map<String, String> result = alipay.payV2(mAliPayBean.getMessage(), true);
-                                    Log.i(TAG, "result: " + result.toString());
-                                    Message msg = new Message();
-                                    msg.what = SDK_PAY_FLAG;
-                                    msg.obj = result;
-                                    mHandler.sendMessage(msg);
-                                }
-                            };
-                            Thread payThread = new Thread(payRunnable);
-                            payThread.start();
-                        } else {
-                            mPayCallback.onFailure(mProductInfo, mAliPayBean.getMessage());
-                        }
+            }
+
+            @Override
+            public void onResponse(Response response) {
+                String body = null;
+                try {
+                    body = response.body().string();
+                    Gson gson = new Gson();
+                    JsonReader reader = new JsonReader(new StringReader(body));
+                    mAliPayBean = gson.fromJson(reader, AliPayBean.class);
+                    if (mAliPayBean.getCode() == 0) {
+                        // 支付宝支付必须异步调起
+                        Runnable payRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                PayTask alipay = new PayTask(activity);
+                                Map<String, String> result = alipay.payV2(mAliPayBean.getMessage(), true);
+                                Log.i(TAG, "result: " + result.toString());
+                                Message msg = new Message();
+                                msg.what = SDK_PAY_FLAG;
+                                msg.obj = result;
+                                mHandler.sendMessage(msg);
+                            }
+                        };
+                        Thread payThread = new Thread(payRunnable);
+                        payThread.start();
+                    } else {
+                        Looper.prepare();
+                        mPayCallback.onFailure(mProductInfo, mAliPayBean.getMessage());
+                        Looper.loop();
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                , new OkHttpClientManager.Param("body", body)
-                , new OkHttpClientManager.Param("subject", subject)
-                , new OkHttpClientManager.Param("totalAmount", totalAmount));
+
+            }
+        });
+//        OkHttpClientManager.postAsyn(Url.ALIPAY, new OkHttpClientManager.ResultCallback<String>() {
+//                    @Override
+//                    public void onError(Request request, Exception e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.d("111111", response);
+//                        Gson gson = new Gson();
+//                        JsonReader reader = new JsonReader(new StringReader(response));
+//                        mAliPayBean = gson.fromJson(reader, AliPayBean.class);
+//                        if (mAliPayBean.getCode() == 0) {
+//                            // 支付宝支付必须异步调起
+//                            Runnable payRunnable = new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    PayTask alipay = new PayTask(activity);
+//                                    Map<String, String> result = alipay.payV2(mAliPayBean.getMessage(), true);
+//                                    Log.i(TAG, "result: " + result.toString());
+//                                    Message msg = new Message();
+//                                    msg.what = SDK_PAY_FLAG;
+//                                    msg.obj = result;
+//                                    mHandler.sendMessage(msg);
+//                                }
+//                            };
+//                            Thread payThread = new Thread(payRunnable);
+//                            payThread.start();
+//                        } else {
+//                            mPayCallback.onFailure(mProductInfo, mAliPayBean.getMessage());
+//                        }
+//                    }
+//                }
+//                , new OkHttpClientManager.Param("body", body)
+//                , new OkHttpClientManager.Param("subject", subject)
+//                , new OkHttpClientManager.Param("totalAmount", totalAmount));
 
     }
 
     private void wxPay(String body, String totalFee) {
-        OkHttpClientManager.postAsyn(Url.WXPAY, new OkHttpClientManager.ResultCallback<String>() {
-                    @Override
-                    public void onError(Request request, Exception e) {
+        FormEncodingBuilder builder = new FormEncodingBuilder();
+        builder.add("body", body);
+        builder.add("totalFee", totalFee);
+        Request request = new Request.Builder().url(Url.WXPAY).post(builder.build()).build();
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
 
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) {
+                String body = null;
+                try {
+                    body = response.body().string();
+                    Gson gson = new Gson();
+                    JsonReader reader = new JsonReader(new StringReader(body));
+                    mWXPAYModel = gson.fromJson(reader, WXPAYModel.class);
+                    if (mWXPAYModel.getCode() == 0) {
+                        PayReq request = new PayReq();
+                        request.appId = mWXPAYModel.getData().getAppId();
+                        request.partnerId = mWXPAYModel.getData().getPartnerId();
+                        request.prepayId = mWXPAYModel.getData().getPrepayId();
+                        request.packageValue = "Sign=WXPay";
+                        request.nonceStr = mWXPAYModel.getData().getNonceStr();
+                        request.timeStamp = mWXPAYModel.getData().getTimeStamp();
+                        request.sign = mWXPAYModel.getData().getSign();
+                        api.sendReq(request);
+                    } else {
+                        mPayCallback.onFailure(mProductInfo, "支付调起失败");
                     }
-
-                    @Override
-                    public void onResponse(String response) {
-                        Gson gson = new Gson();
-                        JsonReader reader = new JsonReader(new StringReader(response));
-                        mWXPAYModel = gson.fromJson(reader, WXPAYModel.class);
-                        if (mWXPAYModel.getCode() == 0) {
-                            PayReq request = new PayReq();
-                            request.appId = mWXPAYModel.getData().getAppId();
-                            request.partnerId = mWXPAYModel.getData().getPartnerId();
-                            request.prepayId = mWXPAYModel.getData().getPrepayId();
-                            request.packageValue = "Sign=WXPay";
-                            request.nonceStr = mWXPAYModel.getData().getNonceStr();
-                            request.timeStamp = mWXPAYModel.getData().getTimeStamp();
-                            request.sign = mWXPAYModel.getData().getSign();
-                            api.sendReq(request);
-                        } else {
-                            mPayCallback.onFailure(mProductInfo, "支付调起失败");
-                        }
-
-                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                , new OkHttpClientManager.Param("body", body)
-                , new OkHttpClientManager.Param("totalFee", totalFee)
 
-
-        );
+            }
+        });
+//        OkHttpClientManager.postAsyn(Url.WXPAY, new OkHttpClientManager.ResultCallback<String>() {
+//                    @Override
+//                    public void onError(Request request, Exception e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Gson gson = new Gson();
+//                        JsonReader reader = new JsonReader(new StringReader(response));
+//                        mWXPAYModel = gson.fromJson(reader, WXPAYModel.class);
+//                        if (mWXPAYModel.getCode() == 0) {
+//                            PayReq request = new PayReq();
+//                            request.appId = mWXPAYModel.getData().getAppId();
+//                            request.partnerId = mWXPAYModel.getData().getPartnerId();
+//                            request.prepayId = mWXPAYModel.getData().getPrepayId();
+//                            request.packageValue = "Sign=WXPay";
+//                            request.nonceStr = mWXPAYModel.getData().getNonceStr();
+//                            request.timeStamp = mWXPAYModel.getData().getTimeStamp();
+//                            request.sign = mWXPAYModel.getData().getSign();
+//                            api.sendReq(request);
+//                        } else {
+//                            mPayCallback.onFailure(mProductInfo, "支付调起失败");
+//                        }
+//
+//                    }
+//                }
+//                , new OkHttpClientManager.Param("body", body)
+//                , new OkHttpClientManager.Param("totalFee", totalFee)
+//
+//
+//        );
     }
 
 
