@@ -1,0 +1,138 @@
+apply plugin: 'com.android.application'
+
+android {
+    // 28  26
+    compileSdkVersion 25
+    defaultConfig {
+        applicationId "com.zongyi.zychannelsdk_demo"
+        minSdkVersion 15
+        targetSdkVersion 25
+        multiDexEnabled true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+//    signingConfigs{
+//        debug {
+//            keyAlias 'release'
+//            keyPassword 'oholyiruchina'
+//            storeFile file('./china_release.keystore')
+//            storePassword 'yiru190102'
+//         //   storeFile file('./debug.keystore')
+//        }
+//        release {
+//            keyAlias 'release'
+//            keyPassword 'oholyiruchina'
+//            storeFile file('./china_release.keystore')
+//            storePassword 'yiru190102'
+//            //   storeFile file('./debug.keystore')
+//        }
+//    }
+
+    signingConfigs {
+        debug {
+            storeFile file('zongyi')
+            storePassword '146286'
+            keyAlias 'zongyi'
+            keyPassword '146286'
+        }
+        release {
+            storeFile file('zongyi')
+            storePassword '146286'
+            keyAlias 'zongyi'
+            keyPassword '146286'
+        }
+    }
+
+    flavorDimensions 'channel'
+
+    productFlavors {
+        gionee {
+            dimension 'channel'
+            applicationId "com.zy.erlsb.jinli"
+        }
+        m4399 {
+            dimension 'channel'
+            applicationId "cn.m4399.game"
+        }
+        m4399single {
+            dimension 'channel'
+            applicationId "com.zy.tsds.m4399"
+        }
+        qihoo {
+            dimension 'channel'
+            applicationId "com.zy.erlsb.qihoo"
+            manifestPlaceholders = ["APPKEY": "9fb8da1c8e31c9e9a53140e9a4f7f0cc", "PRIVATEKEY": "f03077a62135739cc562890dd9117626", "APPID": "204403636"]
+        }
+        gioneeonline {
+            dimension 'channel'
+            applicationId "com.zy.tsds.jinli"
+        }
+        oppo {
+            dimension 'channel'
+            applicationId "com.oppo.mobaddemo"
+            manifestPlaceholders = ["appKey": "6g5XqK5bNB40gg4So0w8K4040"]
+        }
+        xiaomi {
+            dimension 'channel'
+            applicationId "com.sdk.unity.migame.payment"
+        }
+        vivo {
+            dimension 'channel'
+            applicationId "com.tjyr.rqddz.vivo"
+        }
+        huawei {
+            dimension 'channel'
+            applicationId "com.yiru.yxsrs.huawei"
+            manifestPlaceholders = ["cpid": "900086000021108251", "appid": "100583027"]
+        }
+        tencent {
+            dimension 'channel'
+            applicationId "com.tencent.tmgp.zy.ddzjdb"
+            versionCode 21
+            versionName "1.0"
+        }
+        oppoSingle {
+            dimension 'channel'
+            applicationId "com.nearme.offlinesdk.demo"
+            manifestPlaceholders = ["appKey": "c5217trjnrmU6gO5jG8VvUFU0"]
+        }
+        official {
+            dimension 'channel'
+            applicationId "com.yiru.jxdl.at"
+//            apply plugin: 'com.mob.sdk'
+        }
+
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    gioneeImplementation project(':channeladapter')
+    m4399Implementation project(':channeladapter')
+    m4399singleImplementation project(':channeladapter')
+    qihooImplementation project(':channeladapter')
+    gioneeonlineImplementation project(':channeladapter')
+    oppoImplementation project(':channeladapter')
+    vivoImplementation project(':channeladapter')
+    huaweiImplementation project(':channeladapter')
+    tencentImplementation project(':channeladapter')
+    oppoSingleImplementation project(':channeladapter')
+    officialImplementation project(':channeladapter')
+}

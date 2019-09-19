@@ -1,0 +1,134 @@
+apply plugin: 'com.android.library'
+// add these
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.zongyitech' // ××××代表你github名字
+
+android {
+    compileSdkVersion 25
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 25
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    flavorDimensions 'channel'
+
+    productFlavors {
+        gionee {
+            dimension 'channel'
+        }
+        m4399 {
+            dimension 'channel'
+        }
+        m4399single {
+            dimension 'channel'
+        }
+        qihoo {
+            dimension 'channel'
+        }
+        gioneeonline {
+            dimension 'channel'
+        }
+        oppo {
+            dimension 'channel'
+        }
+        xiaomi {
+            dimension 'channel'
+        }
+        vivo {
+            dimension 'channel'
+        }
+        huawei {
+            dimension 'channel'
+        }
+        tencent {
+            dimension 'channel'
+        }
+        oppoSingle {
+            dimension 'channel'
+        }
+        official {
+            dimension 'channel'
+        }
+    }
+}
+
+//if (getGradle().getStartParameter().getTaskRequests()
+//        .toString().contains("Official")){
+//apply plugin: 'com.mob.sdk'
+//MobSDK {
+//    ShareSDK {
+//        devInfo {
+//            QQ {
+//
+//            }
+//            Wechat {
+//
+//            }
+//        }
+//    }
+//    PaySDK {
+//        info {
+//            AliPay {}
+//            Wechat {}
+//        }
+//    }
+//}
+//}
+
+dependencies {
+    //  implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:25.4.0'
+    gioneeImplementation 'com.android.support:support-v4:25.4.0'
+    gioneeImplementation files('libs/gionee.jar')
+    m4399Implementation files("libs/m4399.jar")
+    m4399Implementation files("libs/okhttp-3.4.1.jar")
+    m4399Implementation files("libs/okio-1.6.0.jar")
+    m4399singleImplementation files("libs/m4399SingleOperate.jar")
+    m4399singleImplementation files("libs/m4399SingleRecharge.jar")
+    m4399singleImplementation files("libs/alipaySingle-20170510.jar")
+    qihooImplementation files("libs/360SDK.jar")
+    gioneeonlineImplementation 'com.android.support:support-v4:25.4.0'
+    gioneeonlineImplementation 'com.android.support:support-v13:25.4.0'
+    gioneeonlineImplementation files('libs/gioneeOnline.jar')
+    gioneeonlineImplementation 'com.google.code.gson:gson:2.8.2'
+    oppoImplementation 'com.android.support:support-v4:25.4.0'
+    oppoImplementation files('libs/gamesdk-20190610.jar')
+    xiaomiImplementation files('libs/alipaySdk-20160825.jar')
+    xiaomiImplementation files('libs/eventbus-3.0.0.jar')
+    xiaomiImplementation files('libs/HyZxing_2_1.jar')
+    xiaomiImplementation files('libs/mio_sdk_base_2.0.2_11677.jar')
+    xiaomiImplementation files('libs/org.apache.http.legacy.jar')
+    xiaomiImplementation files('libs/protobuf-java-2.6.1.jar')
+    xiaomiImplementation files('libs/volley-1.0.19.jar')
+    vivoImplementation files('libs/vivounionsdk_v4.2.4.0.jar')
+    vivoImplementation files('libs/org.apache.http.legacy.jar')
+    vivoImplementation files('libs/volley.jar')
+    huaweiImplementation files('libs/hmssdk-2.6.3.301.jar')
+    tencentImplementation(name: 'YSDK_Android_1.4.5_1078', ext: 'aar')
+    oppoSingleImplementation 'com.android.support:support-v4:25.4.0'
+    oppoSingleImplementation files('libs/gamesdk-20190610.jar')
+    officialImplementation(name: 'alipaySdk-15.6.5-20190718211148', ext: 'aar')
+    officialImplementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.4.3'
+    officialImplementation 'com.squareup.okhttp:okhttp:2.4.0'
+    officialImplementation 'com.squareup.okio:okio:1.6.0'
+    officialImplementation 'com.google.code.gson:gson:2.8.1'
+}

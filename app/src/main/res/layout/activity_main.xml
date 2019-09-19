@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:id="@+id/buttons_view"
+        style="@android:style/Widget.Material.Light.ScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="513dp"
+        tools:targetApi="lollipop">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/init_sdk_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onInitSdkButtonClicked"
+                android:text="初始化sdk" />
+
+            <Button
+                android:id="@+id/init_login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onInitLoginButtonClicked"
+                android:text="初始化登录" />
+
+            <Button
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onLoginButtonClicked"
+                android:text="登录游戏" />
+
+            <Button
+                android:id="@+id/pay_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onPayButtonClicked"
+                android:text="支付按钮" />
+
+            <Button
+                android:id="@+id/exitgame_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onExitGameButtonClicked"
+                android:text="退出按钮" />
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
